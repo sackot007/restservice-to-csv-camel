@@ -1,0 +1,7 @@
+com/sackot/service/RmaFeedFileService.class
+com/sackot/controller/RmaFeedFileController.class
+com/sackot/model/RmaFeed.class
+com/sackot/routeconfig/RmaFeedRouteBuilder.class
+com/sackot/RmaFeedFileServiceApplication.class
+com/sackot/ServerConfig.class
+com/sackot/service/RmaFeedFileServiceImpl.class
