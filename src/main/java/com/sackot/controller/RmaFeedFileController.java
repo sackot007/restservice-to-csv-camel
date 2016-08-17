@@ -20,9 +20,30 @@ public class RmaFeedFileController {
     private RmaFeedFileService rmaFeedFileService;
 
     @RequestMapping(value = "/generateRmaFeed", method = RequestMethod.GET)
-    public ResponseEntity<String> generateRmaFeed() {
+    public ResponseEntity generateRmaFeed() {
         logger.info("Inside Controller generateRmaFeed method");
-        String dirPath = rmaFeedFileService.generateFile();
-        return new ResponseEntity<String>("File is generated in "+dirPath, HttpStatus.OK);
+        String dirPath = null;
+        try {
+            dirPath = rmaFeedFileService.generateFile();
+        } catch (Exception e) {
+            logger.error("Error while generating file",e);
+            return new ResponseEntity<String>("Error while generating file.", HttpStatus.BAD_REQUEST);
+        }
+        if (dirPath == null || "".equals(dirPath.trim())) {
+            logger.error("dirPath is empty"+dirPath);
+            return new ResponseEntity<String>("Error while generating file. File Name is null or empty", HttpStatus.BAD_REQUEST);
+        }
+        FileSystemResource fileSystemResource = new FileSystemResource(dirPath);
+        try {
+            return ResponseEntity
+                    .ok()
+                    .contentLength(fileSystemResource.contentLength())
+                    .contentType(MediaType.parseMediaType("application/json"))
+                    .body(new InputStreamResource(fileSystemResource.getInputStream()));
+        } catch (IOException e) {
+            logger.error("Error while downloading file. File Name is "+dirPath,e);
+            return new ResponseEntity<String>("Error while downloading file from "+dirPath, HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
