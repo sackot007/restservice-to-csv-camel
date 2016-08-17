@@ -34,31 +34,11 @@ public class RmaFeedRouteBuilder extends RouteBuilder {
 
         DataFormat bindyCsvDataFormat = new BindyCsvDataFormat(RmaFeed.class);
 
-//        <bean id="httpAuth" class="org.apache.camel.component.http.HttpConfiguration">
-//        <property name="authMethod" value="Basic"/>
-//        <property name="authUsername" value="user"/>
-//        <property name="authPassword" value="password"/>
-//        </bean>
-//
-//        <bean id="http" class="org.apache.camel.component.http.HttpComponent">
-//        <property name="camelContext" ref="camel"/>
-//        <property name="httpConfiguration" ref="httpAuth"/>
-//        </bean>
-//        HttpConfiguration httpConfiguration = new HttpConfiguration();
-//        httpConfiguration.setAuthMethod("BASIC");
-//        httpConfiguration.setAuthUsername();
-//        httpConfiguration.setAuthPassword();
-//
-//        HttpComponent httpComponent = new HttpComponent();
-//        httpComponent.setHttpConfiguration(httpConfiguration);
-//        httpComponent.setCamelContext()
-
-
         from("direct:start")
                 .setHeader(Exchange.HTTP_METHOD, constant("GET"))
                 .setHeader(Exchange.HTTP_URI, simple(rmafeedServiceURL))
                 .setHeader("Authorization", simple(rmafeedServiceAppKey))
-                .to("https://test.assettracking.sackot.com")
+                .to("https://test.assettracking.kohls.com")
                 .unmarshal(listJacksonDataFormat)
 //                        .process(new MyProcessor())
                 .marshal(bindyCsvDataFormat)
