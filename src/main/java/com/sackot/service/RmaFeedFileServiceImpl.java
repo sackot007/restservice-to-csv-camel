@@ -24,7 +24,8 @@ public class RmaFeedFileServiceImpl implements RmaFeedFileService{
 
 
     @Override
-    public String generateFile() {
+    public String generateFile() throws Exception {
+        String generatedFilePath = null;
         RmaFeedRouteBuilder rmaFeedRouteBuilder = new RmaFeedRouteBuilder(rmafeedServiceURL, rmafeedServiceAppKey, rmaFileDirLoc);
         CamelContext camelContext = new DefaultCamelContext();
         try {
@@ -34,11 +35,17 @@ public class RmaFeedFileServiceImpl implements RmaFeedFileService{
             camelContext.start();
 
             ProducerTemplate template = camelContext.createProducerTemplate();
-            template.sendBody("direct:start", "this is a message");
+            Exchange exchange = template.request("direct:start", null);
+
+            Object filePathObj = exchange.getIn().getHeader("CamelFileNameProduced");
+            generatedFilePath = filePathObj!=null?filePathObj.toString():null;
+            logger.info("File produced and file path is "+generatedFilePath);
+
             Thread.sleep(1000);
             camelContext.stop();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error while executing the route",e);
+            throw e;
         }
 
         return rmaFileDirLoc;
